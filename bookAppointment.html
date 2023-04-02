@@ -1,0 +1,98 @@
+
+<html>
+    <body>
+        <form onsubmit="saveToLocalStorage(event)">
+        
+            <label>Name :</label>
+            <input type="text" name="username" required/>
+
+            <label> EmailId :</label>
+            <input type="email" name="emailId" required/>
+
+            <label>Phone Number :</label>
+            <input type="tel" name="phonenumber" />
+
+            <button> Submit </button>
+
+        </form>
+
+        <ul id = 'listOfitems'></ul>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+
+        <script>
+            function saveToLocalStorage(event) {
+                event.preventDefault();
+
+                const name = event.target.username.value;
+                const email = event.target.emailId.value;
+                const phonenumber = event.target.phonenumber.value;
+
+                // localStorage.setItem('name', name);
+                // localStorage.setItem('email', email);
+                // localStorage.setItem('phonenumber', phonenumber);
+                
+                const obj = {
+                    name,
+                    email,
+                    phonenumber
+                }
+
+                axios.post("https://crudcrud.com/api/b8083356b5e64d8190d42aa815ed2f33/appointmentData",obj)
+                .then((response) => {
+                    showUserOnScreen(response.data)
+                    // console.log(response)
+                })
+
+                .catch((err) => {
+                    document.body.innerHTML=document.body.innerHTML + "<h4> Somthing went wrong </h4>"
+                    console.log(err)
+                })
+                // localStorage.setItem(obj.email, JSON.stringify(obj))
+                // showUserOnScreen(obj)
+            }
+
+            function showUserOnScreen(obj){
+                const parentELem = document.getElementById('listOfitems')
+                
+                const childElem = document.createElement('li')
+                childElem.textContent = obj.name + '-' + obj.email + '-' + obj.phonenumber
+                // parentELem.appendChild(childElem)
+
+                        // or
+
+                //    parentELem.innerHTML = parentELen.innerHTML +`<li>${obj.name} - ${obj.email} - ${obj.phonenumber}</li>`    
+                     
+                const deleteButton = document.createElement('input')
+               
+            //    Make it button
+                deleteButton.type = "button"  
+                deleteButton.value = "Delete" 
+                deleteButton.onclick = () => {
+                    localStorage.removeItem(obj.email)
+                    parentELem.removeChild(childElem)
+                
+
+                // childElem.appendChild(deleteButton)
+                // parentELem.appendChild(childElem)
+            }
+
+            const editButton = document.createElement('input')
+            editButton.type = "button"
+            editButton.value = 'Edit'
+            editButton.onclick = () => {
+                localStorage.removeItem(obj.email)
+                parentELem.removeChild(childElem)
+                document.getElementsByTagName('usernameInputTag').value = obj.name
+                document.getElementsByTagName('emailInputTag').value = obj.email
+                document.getElementsByTagName('phoneNumberInputTag').value = obj.phonenumber
+            }
+
+            childElem.appendChild(deleteButton)
+            childElem.appendChild(editButton)
+            parentELem.appendChild(childElem)
+        }
+        
+        </script>
+    </body>
+</html>
