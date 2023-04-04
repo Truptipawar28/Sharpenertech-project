@@ -103,8 +103,8 @@ showUserOnScreen(response.data)
 
             const parentNode = document.getElementById('listOfUsers');
             const childHTML = `<li id=${user._id}> ${user.name} - ${user.email}
-                <button onclick = deleteUser('${user._id}')> Delete User
-                    <button onclick = EditUserDetails('${user._id}','${user.name}')
+                <button onclick = deleteUser('${user._id}')> Delete User </button>
+                    <button onclick = EditUserDetails('${user.email}','${user.name}','${user.phonenumber}','${user._id}')> Edit User </button>
                     </li>`
 
                     parentNode.innerHTML = parentNode.innerHTML + childHTML;
@@ -150,7 +150,7 @@ showUserOnScreen(response.data)
     editButton.type = "button"
     editButton.value = 'Edit'
     editButton.onclick = () => {
-        editUserDetails(user.email,user.name,user.phonenumber)
+        editUserDetails(emailId,name,phonenumber,userId)
     }
 
     childElem.appendChild(deleteButton)
@@ -162,7 +162,7 @@ showUserOnScreen(response.data)
                 document.getElementById('email').value = emailId;
                 document.getElementById('username').value = n;
                 document.getElementById('phonenumber').value = p;
-                deleteUser(emailId);
+                deleteUser(userId);
             }
 
             // editUserDetails('email')
