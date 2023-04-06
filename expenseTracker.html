@@ -10,19 +10,19 @@
     <div class="container">
         <form onsubmit="saveToLocalStorage(event)">
 
-        <label for="amount" class="form-control">Add Expense Amount: </label>
-        <input type="add expense" id="amount" class="form-control" placeholder="Enter amount">
+        <label>Add Expense Amount: </label>
+        <input id="amount" type="tel" name="amount" placeholder="Enter amount" required/>
 
         <br><br>
 
-        <label for="description" class="form-control">Choose Description: </label>
-        <input type="description" id="description" class="form-control" placeholder="Description">
+        <label>Choose Description: </label>
+        <input id="description" type="text" name="description" placeholder="Description" required/>
 
         <br><br>
 
 
-        <label for="Category">Choose Category:</label>
-        <select id="dropdown">
+        <label>Choose Category:</label>
+        <select id="Category">
             <option value="option1">Category</option>
             <option value="option2">Fuel</option>
             <option value="option3">Movie</option>
@@ -33,6 +33,101 @@
                 <button>Add Expense</button>
         <br><br>
        
+        <ul id="ListOfItems"></ul>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+
+        <script>
+            function saveToLocalStorage(event){
+                event.preventDefault();
+
+                const amount = event.target.amount.value;
+                const description = event.target.description.value;
+                const Category = event.target.Category.value;
+
+                const obj = {
+                    amount,
+                    description,
+                    Category
+                }
+
+            axios.post("https://crudcrud.com/api/1574c213248344c88ffdc1bfe21f6cf2/expenseTracker", obj)
+            .then((response) => {
+                ShowNewDetailsOnScreen(response.data)
+
+                console.log(response)
+            })
+
+            .catch((err) => {
+                    document.body.innerHTML = document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err)
+                })
+            }
+
+            window.addEventListener("DOMContentLoaded", () => {
+                axios.get("https://crudcrud.com/api/1574c213248344c88ffdc1bfe21f6cf2/expenseTracker")
+                .then((response) => {
+                    const data = response.data;
+                    for (let i = 0; i < data.length; i++) {
+                        ShowNewDetailsOnScreen(data[i]);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            })
+
+            function ShowNewDetailsOnScreen(user) {
+                const parentElem = document.getElementById('ListOfItems');
+
+                const childElem = document.createElement('li');
+                childElem.id = user._id;
+                childElem.textContent = `Amount: ${user.amount}, Description: ${user.description}, Category: ${user.Category} `;
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => {
+                    deleteUser(user._id);
+                }
+
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.onclick = () => {
+                    editUserDetails(user.amount, user.description, user.Category, user._id);
+                }
+
+                childElem.appendChild(deleteButton);
+                childElem.appendChild(editButton);
+
+                parentElem.appendChild(childElem);
+            }
+
+            function deleteUser(userId) {
+                axios.delete(`https://crudcrud.com/api/1574c213248344c88ffdc1bfe21f6cf2/expenseTracker/${userId}`)
+                .then((response) => {
+                    removeUserFromScreen(userId);
+                })
+                .catch((err) => {
+                    document.body.innerHTML = document.body.innerHTML + "<h4>Something went wrong</h4>"
+                    console.log(err);
+                });
+            }
+
+            function editUserDetails(amount, description, Category, userId) {
+    document.getElementById('email').value = amount;
+    document.getElementById('username').value = description;
+    document.getElementById('phonenumber').value = Category;
+    deleteUser(userId);
+}
+
+
+            function removeUserFromScreen(userId) {
+                const parentNode = document.getElementById('ListOfItems');
+    const childNode = document.getElementById(userId);
+    parentNode.removeChild(childNode);
+            }
+
+        </script>
 </form>
 </div>
 </body>
